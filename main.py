@@ -32,6 +32,25 @@ def main_menu(message):
         back = types.KeyboardButton("Вернуться в главное меню")
         markup.add(button1, button2, back)
         bot.send_message(chat_id, text="Выберите вариант скачивания?", reply_markup=markup)
+        bot.register_next_step_handler(message, download_from_youtube)
+    elif text == "Вернуться в главное меню":
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        button1 = types.KeyboardButton("Скачать из YouTube")
+        button2 = types.KeyboardButton("Скачать из Instagram")
+        markup.add(button1, button2)
+        bot.send_message(chat_id, text="Вы вернулись в главное меню", reply_markup=markup)
+    else:
+        bot.send_message(chat_id, text="На такую комманду я не запрограммирован")
+
+
+def download_from_youtube(message):
+    text = message.text
+    chat_id = message.chat.id
+
+    if text == "Скачать Видео":
+        bot.send_message(chat_id, text="Введите URL:")
+    elif text == "Скачать Аудио":
+        bot.send_message(chat_id, text="Введите URL:")
     elif text == "Вернуться в главное меню":
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         button1 = types.KeyboardButton("Скачать из YouTube")
