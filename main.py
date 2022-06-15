@@ -20,4 +20,26 @@ def start(message):
                      )
 
 
+@bot.message_handler(content_types=['text'])
+def main_menu(message):
+    text = message.text
+    chat_id = message.chat.id
+
+    if text == "Скачать из YouTube":
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        button1 = types.KeyboardButton("Скачать Видео")
+        button2 = types.KeyboardButton("Скачать Аудио")
+        back = types.KeyboardButton("Вернуться в главное меню")
+        markup.add(button1, button2, back)
+        bot.send_message(chat_id, text="Выберите вариант скачивания?", reply_markup=markup)
+    elif text == "Вернуться в главное меню":
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        button1 = types.KeyboardButton("Скачать из YouTube")
+        button2 = types.KeyboardButton("Скачать из Instagram")
+        markup.add(button1, button2)
+        bot.send_message(chat_id, text="Вы вернулись в главное меню", reply_markup=markup)
+    else:
+        bot.send_message(chat_id, text="На такую комманду я не запрограммирован")
+
+
 bot.polling(none_stop=True)
