@@ -35,11 +35,7 @@ def main_menu(message):
         bot.send_message(chat_id, text="Выберите вариант скачивания?", reply_markup=markup)
         bot.register_next_step_handler(message, download_from_youtube)
     elif text == "Вернуться в главное меню":
-        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        button1 = types.KeyboardButton("Скачать из YouTube")
-        button2 = types.KeyboardButton("Скачать из Instagram")
-        markup.add(button1, button2)
-        bot.send_message(chat_id, text="Вы вернулись в главное меню", reply_markup=markup)
+        return_to_main_menu(message)
     else:
         bot.send_message(chat_id, text="На такую комманду я не запрограммирован")
 
@@ -56,11 +52,7 @@ def download_from_youtube(message):
         bot.send_message(chat_id, text="Введите URL:")
         bot.register_next_step_handler(message, download_youtube_audio)
     elif text == "Вернуться в главное меню":
-        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        button1 = types.KeyboardButton("Скачать из YouTube")
-        button2 = types.KeyboardButton("Скачать из Instagram")
-        markup.add(button1, button2)
-        bot.send_message(chat_id, text="Вы вернулись в главное меню", reply_markup=markup)
+        return_to_main_menu(message)
     else:
         bot.send_message(chat_id, text="На такую комманду я не запрограммирован")
 
@@ -70,26 +62,19 @@ def download_youtube_video(message) -> None:
     text = message.text
 
     if text == "Вернуться в главное меню":
-        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        button1 = types.KeyboardButton("Скачать из YouTube")
-        button2 = types.KeyboardButton("Скачать из Instagram")
-        markup.add(button1, button2)
-        bot.send_message(chat_id, text="Вы вернулись в главное меню", reply_markup=markup)
+        return_to_main_menu(message)
     else:
         try:
             yt_obj = YouTube(message.text)
+            bot.send_message(chat_id, text="Началась загрузка...")
             filters = yt_obj.streams.filter(progressive=True, file_extension='mp4')
-            filters.get_highest_resolution().download()
+            filters.get_highest_resolution().download(output_path='/Users/Tony/Downloads')
             bot.send_message(chat_id, text="Видео успешно загруженно")
         except Exception:
             bot.send_message(chat_id, text="Ошибка при скачивании!")
-            markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-            button1 = types.KeyboardButton("Скачать Видео")
-            button2 = types.KeyboardButton("Скачать Аудио")
-            back = types.KeyboardButton("Вернуться в главное меню")
-            markup.add(button1, button2, back)
-            bot.send_message(chat_id, text="Выберите вариант скачивания?", reply_markup=markup)
-            bot.register_next_step_handler(message, download_from_youtube)
+            return_to_main_menu(message)
+        else:
+            return_to_download_from_youtube(message)
 
 
 def download_youtube_audio(message) -> None:
@@ -97,27 +82,37 @@ def download_youtube_audio(message) -> None:
     text = message.text
 
     if text == "Вернуться в главное меню":
-        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        button1 = types.KeyboardButton("Скачать из YouTube")
-        button2 = types.KeyboardButton("Скачать из Instagram")
-        markup.add(button1, button2)
-        bot.send_message(chat_id, text="Вы вернулись в главное меню", reply_markup=markup)
+        return_to_main_menu(message)
     else:
         try:
             yt_obj = YouTube(message.text)
-            print(yt_obj.title)
+            bot.send_message(chat_id, text="Началась загрузка...")
             file_name = "{} - Audio.mp4".format(yt_obj.title)
             yt_obj.streams.get_audio_only().download(output_path='/Users/Tony/Downloads', filename=file_name)
             bot.send_message(chat_id, text="Аудио файл успешно загружен")
         except Exception:
             bot.send_message(chat_id, text="Ошибка при скачивании!")
-            markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-            button1 = types.KeyboardButton("Скачать Видео")
-            button2 = types.KeyboardButton("Скачать Аудио")
-            back = types.KeyboardButton("Вернуться в главное меню")
-            markup.add(button1, button2, back)
-            bot.send_message(chat_id, text="Выберите вариант скачивания?", reply_markup=markup)
-            bot.register_next_step_handler(message, download_from_youtube)
+            return_to_main_menu(message)
+        else:
+            return_to_download_from_youtube(message)
+
+
+def return_to_main_menu(message):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    button1 = types.KeyboardButton("Скачать из YouTube")
+    button2 = types.KeyboardButton("Скачать из Instagram")
+    markup.add(button1, button2)
+    bot.send_message(message.chat.id, text="Вы вернулись в главное меню", reply_markup=markup)
+
+
+def return_to_download_from_youtube(message):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    button1 = types.KeyboardButton("Скачать Видео")
+    button2 = types.KeyboardButton("Скачать Аудио")
+    back = types.KeyboardButton("Вернуться в главное меню")
+    markup.add(button1, button2, back)
+    bot.send_message(message.chat.id, text="Хотите скачать что-нибудь ещё?", reply_markup=markup)
+    bot.register_next_step_handler(message, download_from_youtube)
 
 
 bot.polling(none_stop=True)
