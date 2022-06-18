@@ -2,6 +2,7 @@ import os
 import telebot
 from telebot import types
 from youtube_funcs import download_youtube_video, download_youtube_audio
+from instagram_funcs import download_inst_photo, download_inst_video, download_inst_audio
 
 
 TOKEN = "5416303529:AAHa8me8WANsWCKs2FLf45VC-3o47sATNto"
@@ -35,6 +36,15 @@ def main_menu(message):
         markup.add(button1, button2, back)
         bot.send_message(chat_id, text="Выберите вариант скачивания?", reply_markup=markup)
         bot.register_next_step_handler(message, download_from_youtube)
+    elif text == "Скачать из Instagram":
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        button1 = types.KeyboardButton("Скачать Фото")
+        button2 = types.KeyboardButton("Скачать Видео")
+        button3 = types.KeyboardButton("Скачать Аудио")
+        back = types.KeyboardButton("Вернуться в главное меню")
+        markup.add(button1, button2, button3, back)
+        bot.send_message(chat_id, text="Выберите вариант скачивания?", reply_markup=markup)
+        bot.register_next_step_handler(message, download_from_instagram)
     elif text == "Вернуться в главное меню":
         return_to_main_menu(message)
     else:
@@ -58,6 +68,26 @@ def download_from_youtube(message):
         bot.send_message(chat_id, text="На такую комманду я не запрограммирован")
 
 
+@bot.message_handler(content_types=['text'])
+def download_from_instagram(message):
+    text = message.text
+    chat_id = message.chat.id
+
+    if text == "Скачать Фото":
+        bot.send_message(chat_id, text="Введите URL:")
+        bot.register_next_step_handler(message, download_inst_photo)
+    elif text == "Скачать Видео":
+        bot.send_message(chat_id, text="Введите URL:")
+        bot.register_next_step_handler(message, download_inst_video)
+    elif text == "Скачать Аудио":
+        bot.send_message(chat_id, text="Введите URL:")
+        bot.register_next_step_handler(message, download_inst_audio)
+    elif text == "Вернуться в главное меню":
+        return_to_main_menu(message)
+    else:
+        bot.send_message(chat_id, text="На такую комманду я не запрограммирован")
+
+
 def return_to_main_menu(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     button1 = types.KeyboardButton("Скачать из YouTube")
@@ -74,6 +104,17 @@ def return_to_download_from_youtube(message):
     markup.add(button1, button2, back)
     bot.send_message(message.chat.id, text="Хотите скачать что-нибудь ещё?", reply_markup=markup)
     bot.register_next_step_handler(message, download_from_youtube)
+
+
+def return_to_download_from_instagram(message):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    button1 = types.KeyboardButton("Скачать Фото")
+    button2 = types.KeyboardButton("Скачать Видео")
+    button3 = types.KeyboardButton("Скачать Аудио")
+    back = types.KeyboardButton("Вернуться в главное меню")
+    markup.add(button1, button2, button3, back)
+    bot.send_message(message.chat.id, text="Хотите скачать что-нибудь ещё?", reply_markup=markup)
+    bot.register_next_step_handler(message, download_from_instagram)
 
 
 def send_file(message, file_name, file_type):
