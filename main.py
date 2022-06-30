@@ -1,12 +1,60 @@
 import os
 import telebot
 from telebot import types
-from youtube_funcs import download_youtube_video, download_youtube_audio
+from pytube import YouTube
 
 
 TOKEN = "5416303529:AAHa8me8WANsWCKs2FLf45VC-3o47sATNto"
 bot = telebot.TeleBot(token=TOKEN)
 
+
+class Youtube:
+    @classmethod
+    def download_youtube_video(cls, message) -> None:
+        chat_id = message.chat.id
+        url = message.text
+
+        if url == "Вернуться в главное меню":
+            return_to_main_menu(message)
+        else:
+            try:
+                yt_obj = YouTube(message.text)
+                bot.send_message(chat_id, 'Начинаем загрузку видео...')
+                filters = yt_obj.streams.filter(progressive=True, file_extension='mp4').get_highest_resolution()
+                file_name = "{} - Video.MP4".format(yt_obj.title)
+                filters.download(output_path='/Users/Tony/PycharmProjects/download-telegram-bot/files',
+                                 filename=file_name)
+                bot.send_message(chat_id, text="Видео успешно загруженно")
+                send_file(message, file_name, file_type="Y-video")
+            except Exception:
+                bot.send_message(chat_id, text="Ошибка при скачивании!")
+            finally:
+                return_to_download_from_youtube(message)
+
+    @classmethod
+    def download_youtube_audio(cls, message) -> None:
+        chat_id = message.chat.id
+        text = message.text
+
+        if text == "Вернуться в главное меню":
+            return_to_main_menu(message)
+        else:
+            try:
+                yt_obj = YouTube(message.text)
+                bot.send_message(chat_id, text="Началась загрузка...")
+                file_name = "{} - Audio.MP4".format(yt_obj.title)
+                yt_obj.streams.get_audio_only().download(
+                    output_path='/Users/Tony/PycharmProjects/download-telegram-bot/files',
+                    filename=file_name)
+                bot.send_message(chat_id, text="Аудио файл успешно загружен")
+                send_file(message, file_name, file_type="Y-audio")
+            except Exception:
+                bot.send_message(chat_id, text="Ошибка при скачивании!")
+            finally:
+                return_to_download_from_youtube(message)
+
+
+# ----------Основной код----------
 
 @bot.message_handler(commands=["start"])
 def start(message):
@@ -48,10 +96,10 @@ def download_from_youtube(message):
 
     if text == "Скачать Видео":
         bot.send_message(chat_id, text="Введите URL:")
-        bot.register_next_step_handler(message, download_youtube_video)
+        bot.register_next_step_handler(message, Youtube.download_youtube_video)
     elif text == "Скачать Аудио":
         bot.send_message(chat_id, text="Введите URL:")
-        bot.register_next_step_handler(message, download_youtube_audio)
+        bot.register_next_step_handler(message, Youtube.download_youtube_audio)
     elif text == "Вернуться в главное меню":
         return_to_main_menu(message)
     else:
