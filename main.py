@@ -2,7 +2,7 @@ import os
 import telebot
 from telebot import types
 from pytube import YouTube
-
+import instaloader
 
 TOKEN = "5416303529:AAHa8me8WANsWCKs2FLf45VC-3o47sATNto"
 bot = telebot.TeleBot(token=TOKEN)
@@ -54,6 +54,50 @@ class Youtube:
                 return_to_download_from_youtube(message)
 
 
+class Instagram:
+    @classmethod
+    def download_inst_photo(cls, message):
+        chat_id = message.chat.id
+        url = message.text
+        if url == "Вернуться в главное меню":
+            return_to_main_menu(message)
+        else:
+            try:
+                bot.send_message(chat_id, 'Начинаем загрузку фото...')
+
+                file_name = "{} - photo.MP4".format(1)
+                output_path = '/Users/Tony/PycharmProjects/download-telegram-bot/files'
+
+                bot.send_message(chat_id, text="Фото успешно загруженно")
+                send_file(message, file_name, file_type="I-photo")
+            except Exception:
+                bot.send_message(chat_id, text="Ошибка при скачивании!")
+            finally:
+                return_to_download_from_instagram(message)
+
+    @classmethod
+    def download_inst_video(cls, message):
+        chat_id = message.chat.id
+        url = message.text
+
+        if url == "Вернуться в главное меню":
+            return_to_main_menu(message)
+        else:
+            bot.send_message(chat_id, "Функция находится в разработке")
+            return_to_main_menu(message)
+
+    @classmethod
+    def download_inst_audio(cls, message):
+        chat_id = message.chat.id
+        url = message.text
+
+        if url == "Вернуться в главное меню":
+            return_to_main_menu(message)
+        else:
+            bot.send_message(chat_id, "Функция находится в разработке")
+            return_to_main_menu(message)
+
+
 # ----------Основной код----------
 
 @bot.message_handler(commands=["start"])
@@ -86,8 +130,8 @@ def main_menu(message):
     elif text == "Скачать из Instagram":
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         button1 = types.KeyboardButton("Скачать Фото")
-        button2 = types.KeyboardButton("Скачать Видео")
-        button3 = types.KeyboardButton("Скачать Аудио")
+        button2 = types.KeyboardButton("Скачать Аудио")
+        button3 = types.KeyboardButton("Скачать Видео")
         back = types.KeyboardButton("Вернуться в главное меню")
         markup.add(button1, button2, button3, back)
         bot.send_message(chat_id, text="Выберите вариант скачивания?", reply_markup=markup)
@@ -122,13 +166,13 @@ def download_from_instagram(message):
 
     if text == "Скачать Фото":
         bot.send_message(chat_id, text="Введите URL:")
-        bot.register_next_step_handler(message, download_inst_photo)
-    elif text == "Скачать Видео":
-        bot.send_message(chat_id, text="Введите URL:")
-        bot.register_next_step_handler(message, download_inst_video)
+        bot.register_next_step_handler(message, Instagram.download_inst_photo)
     elif text == "Скачать Аудио":
         bot.send_message(chat_id, text="Введите URL:")
-        bot.register_next_step_handler(message, download_inst_audio)
+        bot.register_next_step_handler(message, Instagram.download_inst_audio)
+    elif text == "Скачать Видео":
+        bot.send_message(chat_id, text="Введите URL:")
+        bot.register_next_step_handler(message, Instagram.download_inst_video)
     elif text == "Вернуться в главное меню":
         return_to_main_menu(message)
     else:
@@ -156,8 +200,8 @@ def return_to_download_from_youtube(message):
 def return_to_download_from_instagram(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     button1 = types.KeyboardButton("Скачать Фото")
-    button2 = types.KeyboardButton("Скачать Видео")
-    button3 = types.KeyboardButton("Скачать Аудио")
+    button2 = types.KeyboardButton("Скачать Аудио")
+    button3 = types.KeyboardButton("Скачать Видео")
     back = types.KeyboardButton("Вернуться в главное меню")
     markup.add(button1, button2, button3, back)
     bot.send_message(message.chat.id, text="Хотите скачать что-нибудь ещё?", reply_markup=markup)
@@ -172,6 +216,12 @@ def send_file(message, file_name, file_type):
     elif file_type == "Y-audio":
         with open(file_path, 'rb') as file:
             bot.send_audio(message.chat.id, file)
+    elif file_type == "I-photo":
+        pass
+    elif file_type == "I-audio":
+        pass
+    elif file_type == "I-video":
+        pass
     os.remove(file_path)
 
 
