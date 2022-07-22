@@ -2,7 +2,7 @@ from telebot.types import Message
 from loader import bot
 import instaloader
 from send_file import send_file
-from handlers.main_heandlers.main_menu import return_to_main_menu, return_to_download_from_instagram
+from keyboards.reply.menu import menu, download_from_instagram_menu
 
 
 class Instagram:
@@ -11,12 +11,12 @@ class Instagram:
         chat_id = message.chat.id
         url = message.text
         if url == "Вернуться в главное меню":
-            return_to_main_menu(message)
+            bot.send_message(message.chat.id, text="Вы вернулись в главное меню", reply_markup=menu())
         else:
             try:
                 bot.send_message(chat_id, 'Начинаем загрузку фото...')
 
-                file_name = "{} - photo.MP4".format(1)
+                file_name = "{} - photo.MP4".format("").replace("/", "")
                 output_path = '/Users/Tony/PycharmProjects/download-telegram-bot/files'
 
                 bot.send_message(chat_id, text="Фото успешно загруженно")
@@ -24,7 +24,9 @@ class Instagram:
             except Exception:
                 bot.send_message(chat_id, text="Ошибка при скачивании!")
             finally:
-                return_to_download_from_instagram(message)
+                bot.send_message(message.chat.id, text="Хотите скачать что-нибудь ещё?",
+                                 reply_markup=download_from_instagram_menu()
+                                 )
 
     @classmethod
     def download_inst_video(cls, message: Message):
@@ -32,10 +34,14 @@ class Instagram:
         url = message.text
 
         if url == "Вернуться в главное меню":
-            return_to_main_menu(message)
+            bot.send_message(message.chat.id, text="Вы вернулись в главное меню", reply_markup=menu())
         else:
-            bot.send_message(chat_id, "Функция находится в разработке")
-            return_to_main_menu(message)
+            try:
+                bot.send_message(chat_id, "Функция находится в разработке")
+            except Exception:
+                bot.send_message(chat_id, text="Ошибка при скачивании!")
+            finally:
+                bot.send_message(message.chat.id, text="Вы вернулись в главное меню", reply_markup=menu())
 
     @classmethod
     def download_inst_audio(cls, message: Message):
@@ -43,9 +49,12 @@ class Instagram:
         url = message.text
 
         if url == "Вернуться в главное меню":
-            return_to_main_menu(message)
+            bot.send_message(message.chat.id, text="Вы вернулись в главное меню", reply_markup=menu())
         else:
-            bot.send_message(chat_id, "Функция находится в разработке")
-            return_to_main_menu(message)
-
+            try:
+                bot.send_message(chat_id, "Функция находится в разработке")
+            except Exception:
+                bot.send_message(chat_id, text="Ошибка при скачивании!")
+            finally:
+                bot.send_message(message.chat.id, text="Вы вернулись в главное меню", reply_markup=menu())
 

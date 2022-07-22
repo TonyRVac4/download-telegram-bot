@@ -1,9 +1,9 @@
 from telebot.types import Message
-from telebot import types
 from loader import bot
 from pytube import YouTube
-from handlers.main_heandlers.main_menu import return_to_main_menu, return_to_download_from_youtube
 from send_file import send_file
+from keyboards.reply.menu import menu, download_from_youtube_menu
+
 
 class Youtube:
     @classmethod
@@ -12,21 +12,24 @@ class Youtube:
         url = message.text
 
         if url == "Вернуться в главное меню":
-            return_to_main_menu(message)
+            bot.send_message(message.chat.id, text="Вы вернулись в главное меню", reply_markup=menu())
         else:
             try:
                 yt_obj = YouTube(message.text)
                 bot.send_message(chat_id, 'Начинаем загрузку видео...')
                 filters = yt_obj.streams.filter(progressive=True, file_extension='mp4').get_highest_resolution()
-                file_name = "{} - Video.MP4".format(yt_obj.title)
-                filters.download(output_path='/Users/Tony/PycharmProjects/download-telegram-bot/files',
+                file_name = "{} - Video.MP4".format(yt_obj.title).replace("/", "")
+                filters.download(output_path='/Users/Tony/PycharmProjects/download-telegram-bot/database/files',
                                  filename=file_name)
                 bot.send_message(chat_id, text="Видео успешно загруженно")
                 send_file(message, file_name, file_type="Y-video")
             except Exception:
                 bot.send_message(chat_id, text="Ошибка при скачивании!")
             finally:
-                return_to_download_from_youtube(message)
+                bot.send_message(message.chat.id, text="Хотите скачать что-нибудь ещё?",
+                                 reply_markup=menu()
+                                 )
+
 
     @classmethod
     def download_youtube_audio(cls, message: Message) -> None:
@@ -34,18 +37,20 @@ class Youtube:
         text = message.text
 
         if text == "Вернуться в главное меню":
-            return_to_main_menu(message)
+            bot.send_message(message.chat.id, text="Вы вернулись в главное меню", reply_markup=menu())
         else:
             try:
                 yt_obj = YouTube(message.text)
                 bot.send_message(chat_id, text="Началась загрузка...")
-                file_name = "{} - Audio.MP4".format(yt_obj.title)
+                file_name = "{} - Audio.MP4".format(yt_obj.title).replace("/", "")
                 yt_obj.streams.get_audio_only().download(
-                    output_path='/Users/Tony/PycharmProjects/download-telegram-bot/files',
+                    output_path='/Users/Tony/PycharmProjects/download-telegram-bot/database/files',
                     filename=file_name)
                 bot.send_message(chat_id, text="Аудио файл успешно загружен")
                 send_file(message, file_name, file_type="Y-audio")
             except Exception:
                 bot.send_message(chat_id, text="Ошибка при скачивании!")
             finally:
-                return_to_download_from_youtube(message)
+                bot.send_message(message.chat.id, text="Хотите скачать что-нибудь ещё?",
+                                 reply_markup=menu()
+                                 )

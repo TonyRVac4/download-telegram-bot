@@ -6,4 +6,4 @@ from loader import bot
 # Эхо хендлер, куда летят текстовые сообщения без указанного состояния
 @bot.message_handler(state=None)
 def bot_echo(message: Message):
-    bot.reply_to(message, "На такую комманду я не запрограммирован!")
+    bot.reply_to(message, "---На такую комманду я не запрограммирован!---")
