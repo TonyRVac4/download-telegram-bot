@@ -3,6 +3,7 @@ from loader import bot
 import instaloader
 from send_file import send_file
 from keyboards.reply.menu import menu, download_from_instagram_menu
+from logs.logers import downloader_loger
 
 
 class Instagram:
@@ -21,7 +22,8 @@ class Instagram:
 
                 bot.send_message(chat_id, text="Фото успешно загруженно")
                 send_file(message, file_name, file_type="I-photo")
-            except Exception:
+            except Exception as exp:
+                downloader_loger(exception=exp, text=url)
                 bot.send_message(chat_id, text="Ошибка при скачивании!")
             finally:
                 bot.send_message(message.chat.id, text="Хотите скачать что-нибудь ещё?",
@@ -38,7 +40,8 @@ class Instagram:
         else:
             try:
                 bot.send_message(chat_id, "Функция находится в разработке")
-            except Exception:
+            except Exception as exp:
+                downloader_loger(exception=exp, text=url)
                 bot.send_message(chat_id, text="Ошибка при скачивании!")
             finally:
                 bot.send_message(message.chat.id, text="Вы вернулись в главное меню", reply_markup=menu())
@@ -53,7 +56,8 @@ class Instagram:
         else:
             try:
                 bot.send_message(chat_id, "Функция находится в разработке")
-            except Exception:
+            except Exception as exp:
+                downloader_loger(exception=exp, text=url)
                 bot.send_message(chat_id, text="Ошибка при скачивании!")
             finally:
                 bot.send_message(message.chat.id, text="Вы вернулись в главное меню", reply_markup=menu())
