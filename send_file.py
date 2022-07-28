@@ -1,6 +1,7 @@
 import os
 from telebot.types import Message
 from loader import bot
+from pydrive.auth import GoogleAuth
 
 
 def send_file(message: Message, file_name, file_type):
