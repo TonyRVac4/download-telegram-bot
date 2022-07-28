@@ -2,6 +2,5 @@ from loader import bot
 import handlers
 from utils.set_bot_commands import set_default_commands
 
-if __name__ == '__main__':
-    set_default_commands()
-    bot.polling(none_stop=True, interval=0)
+set_default_commands()
+bot.polling(none_stop=True, interval=0)
