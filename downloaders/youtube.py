@@ -20,7 +20,7 @@ class Youtube:
                 bot.send_message(chat_id, 'Начинаем загрузку видео...')
                 filters = yt_obj.streams.filter(progressive=True, file_extension='mp4').get_highest_resolution()
                 file_name = "{} - Video.MP4".format(yt_obj.title).replace("/", "")
-                filters.download(output_path='/Users/Tony/PycharmProjects/download-telegram-bot/database/files',
+                filters.download(output_path='TonyRVac4/download-telegram-bot/database/files',
                                  filename=file_name)
                 bot.send_message(chat_id, text="Видео успешно загруженно")
                 send_file(message, file_name, file_type="Y-video")
@@ -45,7 +45,7 @@ class Youtube:
                 bot.send_message(chat_id, text="Началась загрузка...")
                 file_name = "{} - Audio.MP4".format(yt_obj.title).replace("/", "")
                 yt_obj.streams.get_audio_only().download(
-                    output_path='/Users/Tony/PycharmProjects/download-telegram-bot/database/files',
+                    output_path='TonyRVac4/download-telegram-bot/database/files',
                     filename=file_name)
                 bot.send_message(chat_id, text="Аудио файл успешно загружен")
                 send_file(message, file_name, file_type="Y-audio")
