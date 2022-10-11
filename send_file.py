@@ -3,9 +3,11 @@ from telebot.types import Message
 from loader import bot
 from pydrive.auth import GoogleAuth
 
+BASE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "database/files")
+
 
 def send_file(message: Message, file_name, file_type):
-    file_path = os.path.abspath(os.path.join("TonyRVac4/download-telegram-bot/database/files", file_name))
+    file_path = os.path.join(BASE_DIR, file_name)
     if file_type == "Y-video":
         with open(file_path, 'rb') as file:
             bot.send_video(message.chat.id, file)  # не отправляет большие файлы
