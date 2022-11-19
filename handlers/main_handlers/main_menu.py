@@ -3,6 +3,7 @@ from loader import bot
 from downloaders.youtube import Youtube
 from downloaders.instagram import Instagram
 from keyboards.reply.menu import menu, download_from_youtube_menu, download_from_instagram_menu
+from handlers.main_handlers.history import history
 
 
 @bot.message_handler(content_types=['text'])
@@ -18,6 +19,8 @@ def main_menu_handler(message: Message):
         bot.register_next_step_handler(message, download_from_instagram)
     elif text == "Вернуться в главное меню":
         bot.send_message(message.chat.id, text="Вы вернулись в главное меню", reply_markup=menu())
+    elif text == "История скачиваний":
+        bot.register_next_step_handler(message, history)
     else:
         bot.send_message(chat_id, text="На такую комманду я не запрограммирован")
 
