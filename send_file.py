@@ -5,7 +5,10 @@ from pydrive.auth import GoogleAuth
 
 
 def send_file(message: Message, file_name, file_type):
-    file_path = os.path.abspath(os.path.join("TonyRVac4/download-telegram-bot/database/files", file_name))
+    base_url = "/Users/Tony/PycharmProjects/download-telegram-bot/database/files"
+    # base_url = "TonyRVac4/download-telegram-bot/database/files/"
+
+    file_path = os.path.abspath(os.path.join(base_url, file_name))
     if file_type == "Y-video":
         with open(file_path, 'rb') as file:
             bot.send_video(message.chat.id, file)  # не отправляет большие файлы
@@ -18,4 +21,3 @@ def send_file(message: Message, file_name, file_type):
         pass
     elif file_type == "I-video":
         pass
-    os.remove(file_path)

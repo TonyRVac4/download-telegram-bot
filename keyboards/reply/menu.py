@@ -5,7 +5,8 @@ def menu() -> ReplyKeyboardMarkup:
     markup = ReplyKeyboardMarkup(resize_keyboard=True)
     button1 = KeyboardButton("Скачать из YouTube")
     button2 = KeyboardButton("Скачать из Instagram")
-    markup.add(button1, button2)
+    button3 = KeyboardButton("История скачиваний")
+    markup.add(button1, button2, button3)
     return markup
 
 
