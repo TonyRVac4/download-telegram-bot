@@ -12,8 +12,9 @@ class Youtube:
     def download_youtube_video(cls, message: Message) -> None:
         chat_id = message.chat.id
         url = message.text
-        base_url = "/Users/Tony/PycharmProjects/download-telegram-bot/database/files"
-        # base_url = "TonyRVac4/download-telegram-bot/database/files/"
+        user_id = message.from_user.id
+        #base_path = "/Users/Tony/PycharmProjects/download-telegram-bot/database/files"
+        base_path = "TonyRVac4/download-telegram-bot/database/files/"
 
         if url == "Вернуться в главное меню":
             bot.send_message(chat_id, text="Вы вернулись в главное меню", reply_markup=menu())
@@ -23,14 +24,18 @@ class Youtube:
                 bot.send_message(chat_id, 'Начинаем загрузку видео...')
                 filters = yt_obj.streams.filter(progressive=True, file_extension='mp4').get_highest_resolution()
                 file_name = "{} - Video.MP4".format(yt_obj.title).replace("/", "")
-                filters.download(output_path=base_url,
+                filters.download(output_path=base_path,
                                  filename=file_name)
                 bot.send_message(chat_id, text="Видео успешно загруженно")
                 send_file(message, file_name, file_type="Y-video")
                 with db:
-                    History.create(user_id=message.from_user.id,
-                                   file_path=file_name,
-                                   type="Y-video")
+                    for hotel in History.select().where(History.user_id == user_id):
+                        if file_name == hotel.file_path:
+                            break
+                    else:
+                        History.create(user_id=message.from_user.id,
+                                       file_path=file_name,
+                                       type="Y-video")
             except Exception as exp:
                 downloader_loger(exception=exp, text=url)
                 bot.send_message(chat_id, text="Ошибка при скачивании!")
@@ -43,8 +48,9 @@ class Youtube:
     def download_youtube_audio(cls, message: Message) -> None:
         chat_id = message.chat.id
         url = message.text
-        base_url = "/Users/Tony/PycharmProjects/download-telegram-bot/database/files"
-        # base_url = "TonyRVac4/download-telegram-bot/database/files/"
+        user_id = message.from_user.id
+        #base_path = "/Users/Tony/PycharmProjects/download-telegram-bot/database/files"
+        base_path = "TonyRVac4/download-telegram-bot/database/files/"
         if url == "Вернуться в главное меню":
             bot.send_message(chat_id, text="Вы вернулись в главное меню", reply_markup=menu())
         else:
@@ -53,14 +59,18 @@ class Youtube:
                 bot.send_message(chat_id, text="Началась загрузка...")
                 file_name = "{} - Audio.MP4".format(yt_obj.title).replace("/", "")
                 yt_obj.streams.get_audio_only().download(
-                    output_path=base_url,
+                    output_path=base_path,
                     filename=file_name)
                 bot.send_message(chat_id, text="Аудио файл успешно загружен")
                 send_file(message, file_name, file_type="Y-audio")
                 with db:
-                    History.create(user_id=message.from_user.id,
-                                   file_path=file_name,
-                                   type="Y-audio")
+                    for hotel in History.select().where(History.user_id == user_id):
+                        if file_name == hotel.file_path:
+                            break
+                    else:
+                        History.create(user_id=message.from_user.id,
+                                       file_path=file_name,
+                                       type="Y-audio")
             except Exception as exp:
                 downloader_loger(exception=exp, text=url)
                 bot.send_message(chat_id, text="Ошибка при скачивании!")

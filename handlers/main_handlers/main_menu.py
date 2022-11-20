@@ -25,7 +25,7 @@ def main_menu_handler(message: Message):
         bot.send_message(chat_id, text="На такую комманду я не запрограммирован")
 
 
-@bot.message_handler(content_types=['text'])
+@bot.message_handler(commands=['12442341'])
 def download_from_youtube(message):
     text = message.text
     chat_id = message.chat.id
@@ -40,7 +40,7 @@ def download_from_youtube(message):
         bot.send_message(message.chat.id, text="Вы вернулись в главное меню", reply_markup=menu())
 
 
-@bot.message_handler(content_types=['text'])
+@bot.message_handler(commands=["0876529"])
 def download_from_instagram(message):
     text = message.text
     chat_id = message.chat.id
