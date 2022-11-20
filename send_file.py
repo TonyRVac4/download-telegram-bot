@@ -5,8 +5,8 @@ from pydrive.auth import GoogleAuth
 
 
 def send_file(message: Message, file_name, file_type):
-    base_url = "/Users/Tony/PycharmProjects/download-telegram-bot/database/files"
-    # base_url = "TonyRVac4/download-telegram-bot/database/files/"
+    # base_url = "/Users/Tony/PycharmProjects/download-telegram-bot/database/files"
+    base_url = "TonyRVac4/download-telegram-bot/database/files/"
 
     file_path = os.path.abspath(os.path.join(base_url, file_name))
     if file_type == "Y-video":
