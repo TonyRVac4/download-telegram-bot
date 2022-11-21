@@ -21,25 +21,28 @@ def check_command(call: CallbackQuery):
     counter = 0
     file_type = str()
     user_db_path = os.path.join(DATA_BASE_PATH, str(user_id))
+    try:
+        if text == "output":
+            for i_file in os.listdir(user_db_path):
 
-    if text == "output":
-        for i_file in os.listdir(user_db_path):
+                if i_file.endswith("Video.MP4"):
+                    file_type = "Y-video"
+                elif i_file.endswith("Audio.MP4"):
+                    file_type = "Y-audio"
 
-            if i_file.endswith("Video.MP4"):
-                file_type = "Y-video"
-            elif i_file.endswith("Audio.MP4"):
-                file_type = "Y-audio"
+                send_file(message=call.message, file_name=i_file, file_type=file_type)
+        elif text == "del":
+            for i_file in os.listdir(user_db_path):
+                os.remove(os.path.join(user_db_path, i_file))
+            counter += 1
+            bot.edit_message_text(text="История очищена",
+                                  chat_id=chat_id,
+                                  message_id=call.message.id)
 
-            send_file(message=call.message, file_name=i_file, file_type=file_type)
-    elif text == "del":
-        for i_file in os.listdir(user_db_path):
-            os.remove(os.path.join(user_db_path, i_file))
-        counter += 1
-        bot.edit_message_text(text="История очищена",
-                              chat_id=chat_id,
-                              message_id=call.message.id)
-
-    if counter == 0:
-        bot.edit_message_text(text="История пуста",
-                              chat_id=chat_id,
-                              message_id=call.message.id)
+        if counter == 0:
+            bot.edit_message_text(text="История пуста",
+                                  chat_id=chat_id,
+                                  message_id=call.message.id)
+    except Exception:
+        bot.send_message(text="Ошибка!",
+                              chat_id=chat_id)
