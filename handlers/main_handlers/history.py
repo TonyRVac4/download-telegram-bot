@@ -24,7 +24,7 @@ def check_command(call: CallbackQuery):
     try:
         if text == "output":
             for i_file in os.listdir(user_db_path):
-
+                counter += 1
                 if i_file.endswith("Video.MP4"):
                     file_type = "Y-video"
                 elif i_file.endswith("Audio.MP4"):
