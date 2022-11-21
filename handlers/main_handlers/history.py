@@ -1,9 +1,10 @@
 from telebot.types import Message, CallbackQuery
 from loader import bot
-from database.models import db, History
 from keyboards.inline.del_history import del_history, del_history_call_data
 from send_file import send_file
 import os
+from config_data.config import DATA_BASE_PATH
+
 
 @bot.message_handler(commands=['864786'])
 def history(message: Message):
@@ -16,26 +17,27 @@ def check_command(call: CallbackQuery):
     chat_id = call.message.chat.id
     user_id = call.from_user.id
     text = call.data
-    # base_path = "/Users/Tony/PycharmProjects/download-telegram-bot/database/files"
-    base_path = "TonyRVac4/download-telegram-bot/database/files/"
+
     counter = 0
+    file_type = str()
+    user_db_path = os.path.join(DATA_BASE_PATH, str(user_id))
+
     if text == "output":
-        with db:
-            for hotel in History.select().where(History.user_id == user_id):
-                counter += 1
+        for i_file in os.listdir(user_db_path):
 
-                send_file(message=call.message, file_name=hotel.file_path, file_type=hotel.type)
+            if i_file.endswith("Video.MP4"):
+                file_type = "Y-video"
+            elif i_file.endswith("Audio.MP4"):
+                file_type = "Y-audio"
 
+            send_file(message=call.message, file_name=i_file, file_type=file_type)
     elif text == "del":
-        with db:
-            for hotel in History.select().where(History.user_id == user_id or History.user_id == 0):
-                counter += 1
-                path = os.path.join(base_path, hotel.file_path)
-                os.remove(path)
-                hotel.delete_instance()
-            bot.edit_message_text(text="История очищена",
-                                  chat_id=chat_id,
-                                  message_id=call.message.id)
+        for i_file in os.listdir(user_db_path):
+            os.remove(os.path.join(user_db_path, i_file))
+        counter += 1
+        bot.edit_message_text(text="История очищена",
+                              chat_id=chat_id,
+                              message_id=call.message.id)
 
     if counter == 0:
         bot.edit_message_text(text="История пуста",
