@@ -23,8 +23,6 @@ class Youtube:
                 filters = yt_obj.streams.filter(progressive=True, file_extension='mp4').get_highest_resolution()
                 file_name = "{} - Video.MP4".format(yt_obj.title).replace("/", "")
                 data_base_path = os.path.join(DATA_BASE_PATH, str(user_id))
-                if str(user_id) not in os.listdir(DATA_BASE_PATH):
-                    os.mkdir(data_base_path)
                 if not os.path.exists(os.path.join(data_base_path, file_name)):
                     bot.send_message(chat_id, 'Начинаем загрузку видео...')
                     filters.download(output_path=data_base_path,
@@ -53,8 +51,7 @@ class Youtube:
                 yt_obj = YouTube(url)
                 file_name = "{} - Audio.MP4".format(yt_obj.title).replace("/", "")
                 data_base_path = os.path.join(DATA_BASE_PATH, str(user_id))
-                if str(user_id) not in os.listdir(DATA_BASE_PATH):
-                    os.mkdir(data_base_path)
+
                 if not os.path.exists(os.path.join(data_base_path, file_name)):
                     bot.send_message(chat_id, text="Начинаем загрузку аудио...")
                     yt_obj.streams.get_audio_only().download(
